@@ -1,4 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import numpy as np
 from io import BytesIO
@@ -9,11 +10,46 @@ import requests
 
 app = FastAPI()
 
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 CLASS_NAMES = ['Tomato_Early_blight', 'Tomato_Late_blight', 'Tomato_healthy']
 
-# MODEL = keras.models.load_model('../models/1')
+# MODEL = keras.models.load_model('../models/1') <-- old way to load model
+
+# Better more dynamic way to load model using tensorflow/serving image from docker:
+
+"""
+To make this endpoint work, we're using docker with the following command in the terminal:
+
+docker run -t --rm -p 8001:8001 -v /home/rochu/Code/Image_classification:/Image_classification tensorflow/serving
+--rest_api_port=8001 --model_config_file=/Image_classification/models.config
+
+In the models.config file:
+
+model_config_list {
+    config {
+        name: "tomatoes_model"
+        base_path: "/Image_classification/models"
+        model_platform: "tensorflow"
+        model_version_policy: {all: {}}
+    }
+}
+"""
 
 endpoint = "http://localhost:8001/v1/models/tomatoes_model:predict"
+# v1 is not the version of the model
+# tomatoes_model is specified in the models.config file
 
 
 @app.get("/ping")
