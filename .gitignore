@@ -132,4 +132,4 @@ dmypy.json
 dataset/
 
 # Ignore the models files
-models/
+saved_models/
