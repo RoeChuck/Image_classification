@@ -23,7 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-CLASS_NAMES = ['Tomato_Early_blight', 'Tomato_Late_blight', 'Tomato_healthy']
+CLASS_NAMES = ['Early blight', 'Late blight', 'Healthy']
 
 # MODEL = keras.models.load_model('../models/1') <-- old way to load model
 
@@ -93,3 +93,6 @@ async def predict(file: UploadFile = File(...)):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
+
+# To run the app:
+# $ uvicorn main:app
